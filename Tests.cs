@@ -10,7 +10,7 @@ namespace CommonTests
     public class Tests
     {
         [TestMethod]
-        public void TestCommands()
+        public void TestScenario1()
         {
             var command1 = new Command1();
             var command2 = new Command2();
@@ -39,7 +39,7 @@ namespace CommonTests
         }
 
         [TestMethod]
-        public void TestCommands2()
+        public void TestScenario2()
         {
             var command1 = new Command1();
             var command2 = new Command2();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonTests.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,13 +15,13 @@ namespace CommonTests.Commands
 
         protected override bool ExecuteAction()
         {
-            Output("failed command executed");
+            Logging.Output("failed command executed");
             return false;
         }
 
         public override void Rollback()
         {
-            Output("failed command cancelled");
+            Logging.Output("failed command cancelled");
         }
     }
 }

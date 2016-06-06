@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using CommonTests.Commands;
+using CommonTests.Utils;
 
 namespace CommonTests
 {
@@ -12,6 +13,8 @@ namespace CommonTests
         [TestMethod]
         public void TestScenario1()
         {
+            Logging.Output("TestScenario1:");
+
             var command1 = new Command1();
             var command2 = new Command2();
             var command3 = new Command3(new MultiCommand(null, new List<ICommand> { command1 }));
@@ -36,11 +39,14 @@ namespace CommonTests
             }, null);
 
             groups.Execute();
+            Logging.Output(string.Empty);
         }
 
         [TestMethod]
         public void TestScenario2()
         {
+            Logging.Output("TestScenario2");
+
             var command1 = new Command1();
             var command2 = new Command2();
             var command3 = new FailCommand(new MultiCommand(null, new List<ICommand> { command1 }));
@@ -65,6 +71,7 @@ namespace CommonTests
             }, null);
 
             groups.Execute();
+            Logging.Output(string.Empty);
         }
     }
 }

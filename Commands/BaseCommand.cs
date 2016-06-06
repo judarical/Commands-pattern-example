@@ -6,14 +6,6 @@ namespace CommonTests.Commands
     {
         private ICommand rollbackMultiCommand;
 
-        public void Output(string s)
-        {
-            using (var streamWriter = new StreamWriter("c://temp/myfileCommands.txt", true))
-            {
-                streamWriter.WriteLine(s);
-            }
-        }
-
         #region constructors
         protected BaseCommand(MultiCommand rollbackMultiCommand = null)
         {

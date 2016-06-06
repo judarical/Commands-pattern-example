@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonTests.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,25 +24,36 @@ namespace CommonTests.Commands
         #region not implemented members
         public void BatchRollback()
         {
-            throw new NotImplementedException();
+            foreach (var rollbackCommand in rollbackCommands)
+            {
+                rollbackCommand.Rollback();
+            }
         }
 
+        /// <summary>
+        /// This method will execute all the commands one by one.
+        /// </summary>
+        /// <returns>Returns true if all commands successfully executed.</returns>
         public bool Execute()
         {
             foreach (var command in commands)
             {
                 if (!command.Execute())
-                    return false;               
+                   return false;               
             }
 
             return true;
         }
 
+        /// <summary>
+        /// This is the way to cancel all commands in the group.
+        /// </summary>
         public void Rollback()
         {
-            foreach (var rollbackCommand in rollbackCommands)
+            var reversedCommands = rollbackCommands.FastReverse();
+            foreach (var command in reversedCommands)
             {
-                rollbackCommand.Rollback();
+                command.Rollback();
             }
         }
         #endregion

@@ -1,44 +1,55 @@
-﻿using System.IO;
+﻿using CommonTests.RollbackStrategies;
 
 namespace CommonTests.Commands
 {
     abstract class BaseCommand : ICommand
     {
-        private ICommand rollbackMultiCommand;
+        private IRollbackStrategy rollbackStrategy;
 
+        protected bool executed;
+        
         #region constructors
-        protected BaseCommand(MultiCommand rollbackMultiCommand = null)
+        /// <summary>
+        /// Constructor accepts rollbackStrategy to manage rollbacks.
+        /// </summary>
+        /// <param name="rollbackStrategy"></param>
+        protected BaseCommand(IRollbackStrategy rollbackStrategy)
         {
-            SetRollbackMultiCommand(rollbackMultiCommand);
+            SetRollbackStrategy(rollbackStrategy);
         }
         #endregion
 
         protected abstract bool ExecuteAction();
 
-        public abstract void Rollback();
-
-        public bool Execute()
-        {
-            if (!ExecuteAction())
-            {
-                BatchRollback();
-                return false;
-            }
-
-            return true;
+        protected abstract bool RollbackAction();
+        
+        public void Rollback()
+        {            
+            if (RollbackAction())
+                executed = false;
         }
         
-        public void BatchRollback()
+        public bool Execute()
         {
-            Rollback();
+            // we don't want to repeat executed actions...
+            if (executed || ExecuteAction()) {
+                executed = true;
+                return true;
+            }
             
-            if (rollbackMultiCommand != null)
-                rollbackMultiCommand.Rollback();
+            if (rollbackStrategy == null)
+            {
+                // by default, we will rollback command itself
+                rollbackStrategy = new RollbackOneStrategy(this);                
+            }
+
+            rollbackStrategy.Rollback();
+            return false;            
         }
 
-        public void SetRollbackMultiCommand(MultiCommand rollbackMultiCommand)
+        public void SetRollbackStrategy(IRollbackStrategy rollbackStrategy)
         {
-            this.rollbackMultiCommand = rollbackMultiCommand;
+            this.rollbackStrategy = rollbackStrategy;
         }
     }
 }

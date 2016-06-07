@@ -1,61 +1,54 @@
-﻿using CommonTests.Utils;
-using System;
+﻿using CommonTests.RollbackStrategies;
+using CommonTests.Utils;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTests.Commands
 {
-    class MultiCommand : ICommand
+    class MultiCommand : BaseCommand
     {
-        private List<ICommand> rollbackCommands;
-
         private List<ICommand> commands;
 
-        public MultiCommand(List<ICommand> commands, List<ICommand> rollbackCommands)
-        {
-            this.rollbackCommands = rollbackCommands;
-            if (rollbackCommands != null)
-                this.rollbackCommands.Reverse();
-            this.commands = commands;
-        }
+        private IRollbackStrategy rollbackStrategy;
 
-        #region not implemented members
-        public void BatchRollback()
+        public MultiCommand(List<ICommand> commands = null)
+            : base (new RollbackNoneStrategy())
         {
-            foreach (var rollbackCommand in rollbackCommands)
-            {
-                rollbackCommand.Rollback();
-            }
-        }
-
+            SetCommands(commands, rollbackStrategy);
+        }        
+                
         /// <summary>
-        /// This method will execute all the commands one by one.
+        /// This is the way to cancel all commands in the group.
         /// </summary>
-        /// <returns>Returns true if all commands successfully executed.</returns>
-        public bool Execute()
+        protected override bool RollbackAction()
         {
-            foreach (var command in commands)
+            foreach (var command in commands.FastReverse())
             {
-                if (!command.Execute())
-                   return false;               
+                command.Rollback();
             }
 
             return true;
         }
 
-        /// <summary>
-        /// This is the way to cancel all commands in the group.
-        /// </summary>
-        public void Rollback()
+        protected override bool ExecuteAction()
         {
-            var reversedCommands = rollbackCommands.FastReverse();
-            foreach (var command in reversedCommands)
+            foreach (var command in commands)
             {
-                command.Rollback();
+                if (!command.Execute())
+                    return false;     
             }
+
+            return true;
         }
-        #endregion
+
+        public ICommand CommandAt(int index)
+        {
+            return commands[index];
+        }
+
+        public void SetCommands(List<ICommand> commands, IRollbackStrategy rollbackStrategy)
+        {
+            this.rollbackStrategy = rollbackStrategy;
+            this.commands = commands;
+        }
     }
 }

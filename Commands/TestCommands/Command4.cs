@@ -1,6 +1,4 @@
-﻿using CommonTests.RollbackStrategies;
-
-namespace CommonTests.Commands
+﻿namespace CommonTests.Commands
 {
     class Command4 : SimpleTestCommand
     {

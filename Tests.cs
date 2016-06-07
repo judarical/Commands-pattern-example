@@ -100,7 +100,8 @@ namespace CommonTests
             Logging.Output("\r\nTestScenario1: FULLROLLBACK");
             var command = BuildCommands();
             // this will match serviceCommand4
-            ((SimpleTestCommand)((MultiCommand)command.CommandAt(3)).CommandAt(3)).SetEmulateFail(true);
+            ((SimpleTestCommand)((MultiCommand)command.CommandAt(3)) // this will match serviceCommandGroup 
+                .CommandAt(3)).SetEmulateFail(true); // this will match Command4
             command.Execute();
             Logging.Output(string.Empty);
         }
@@ -140,7 +141,7 @@ namespace CommonTests
             Logging.Output("\r\nTestScenario4: MORETHANONECOMMANDROLLBACK");
             var command = BuildCommands();
             ((SimpleTestCommand)((MultiCommand)command.CommandAt(3)) // this will match serviceGroup 
-                .CommandAt(2)) // this will match Command5
+                .CommandAt(2)) // this will match Command3
                 .SetEmulateFail(true);
             command.Execute();
             Logging.Output(string.Empty);
@@ -154,7 +155,7 @@ namespace CommonTests
             Logging.Output("\r\nTestScenario5: MORETHANONECOMMANDROLLBACK 2");
             var command = BuildCommands();
             ((SimpleTestCommand)((MultiCommand)command.CommandAt(3)) // this will match serviceGroup 
-                .CommandAt(0)) // this will match Command5
+                .CommandAt(0)) // this will match Command1
                 .SetEmulateFail(true);
             command.Execute();
             Logging.Output(string.Empty);
@@ -167,8 +168,8 @@ namespace CommonTests
         {
             Logging.Output("\r\nTestScenario6: ONECOMMMANDROLLBACK");
             var command = BuildCommands();
-            ((SimpleTestCommand)((MultiCommand)command.CommandAt(0)) // this will match serviceGroup 
-                .CommandAt(2)) // this will match Command5
+            ((SimpleTestCommand)((MultiCommand)command.CommandAt(0)) // this will match fileGroup 
+                .CommandAt(2)) // this will match Command3
                 .SetEmulateFail(true);
             command.Execute();
             Logging.Output(string.Empty);
